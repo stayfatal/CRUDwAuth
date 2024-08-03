@@ -17,7 +17,7 @@ func (s *Server) CreateUserHandler(c *gin.Context) {
 		return
 	}
 
-	id, err := s.manager.CreateUser(user)
+	id, err := s.dbManager.CreateUser(user)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -45,7 +45,7 @@ func (s *Server) GetUserHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := s.manager.GetUser(id)
+	user, err := s.dbManager.GetUser(id)
 	if err != nil {
 		c.String(http.StatusNotFound, err.Error())
 		return

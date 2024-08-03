@@ -5,14 +5,16 @@ import (
 )
 
 type User struct {
-	ID       int
-	Username string
-	Password string
+	ID       int    `json:"id"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func (dm *DBManager) createUserTable() error {
 	createTable := `CREATE TABLE IF NOT EXISTS users (
-		user_id SERIAL PRIMARY KEY,
+		id SERIAL PRIMARY KEY,
+		email VARCHAR(255) NOT NULL,
 		username VARCHAR(255) NOT NULL,
 		password VARCHAR(255) NOT NULL
 	)`
@@ -25,7 +27,7 @@ func (dm *DBManager) createUserTable() error {
 
 func (dm *DBManager) CreateUser(user User) (int, error) {
 	var id int
-	err := dm.db.QueryRow("insert into users (user_id,username,password) values ($1,$2,$3) RETURNING user_id", user.ID, user.Username, user.Password).Scan(&id)
+	err := dm.db.QueryRow("insert into users (email,username,password) values ($1,$2,$3) RETURNING id", user.Email, user.Username, user.Password).Scan(&id)
 	if err != nil {
 		return -1, err
 	}
@@ -33,10 +35,10 @@ func (dm *DBManager) CreateUser(user User) (int, error) {
 }
 
 func (dm *DBManager) GetUser(id int) (User, error) {
-	row := dm.db.QueryRow("select * from users where user_id = $1", id)
+	row := dm.db.QueryRow("select * from users where id = $1", id)
 	user := User{}
 	var ignore string
-	err := row.Scan(&user.ID, &user.Username, &ignore)
+	err := row.Scan(&user.ID, &user.Email, &user.Username, &ignore)
 	if err != nil {
 		return User{}, nil
 	}
