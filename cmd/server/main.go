@@ -35,7 +35,7 @@ func main() {
 
 	auth := router.Group("/")
 
-	auth.Use(middleware.Auntification())
+	auth.Use(middleware.Authentication())
 
 	auth.GET("/profile", server.GetUserHandler)
 
