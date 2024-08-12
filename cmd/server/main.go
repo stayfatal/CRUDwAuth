@@ -4,11 +4,8 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
 	"server/internal/handlers"
 	"server/internal/middleware"
-	"syscall"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,15 +21,15 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go server.NotifyManager.CheckEventsAndNotify(ctx)
+	defer cancel()
+	// sigs := make(chan os.Signal, 1)
+	// signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		sig := <-sigs
-		cancel()
-		log.Fatal(sig)
-	}()
+	// go func() {
+	// 	sig := <-sigs
+	// 	cancel()
+	// 	log.Fatal(sig)
+	// }()
 
 	router.POST("/register", server.CreateUserHandler)
 
